@@ -26,8 +26,8 @@ public class EnemyStatus : MonoBehaviour
 
     [Header("distance")]
     Transform distance;
-    
 
+    [SerializeField] EnemyStatus enemystatus;
     //other
     Animator _animator;
     Animation _animation;
