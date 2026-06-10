@@ -30,7 +30,7 @@ public class EnemyStatus : MonoBehaviour
 
 
 
-    [SerializeField] EnemyStatus enemystatus;
+    [SerializeField] private EnemyStatus enemystatus;
     //other
     Animator _animator;
     Animation _animation;
