@@ -93,9 +93,10 @@ public class Player : MonoBehaviour
             Debug.Log("weaponを拾った");
             ItemSlot.Add(collision.gameObject);
             collision.gameObject.SetActive(false);
+            
         }
 
-        else if (collision.gameObject.CompareTag("Enemy") && _enemyStatus._isattack == true)
+        else if (collision.gameObject.CompareTag("Enemy"))
         {
             Debug.LogWarning("enemyに触れた");
             hitpoint -= _enemyStatus.attack;

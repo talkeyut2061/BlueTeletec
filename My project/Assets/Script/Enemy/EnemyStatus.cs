@@ -15,14 +15,14 @@ public class EnemyStatus : MonoBehaviour
 {
 
     [Header("main system")]
-    private int hitpoint;
     [SerializeField] public int maxhitpoint = 0;
+    [SerializeField] private int hitpoint;
     [SerializeField] public int attack = 0;
     [SerializeField] public int defence = 0;
 
     [Header("sub system")]
-    [SerializeField] public bool _isattack = false;
-    bool _ispatroll = false;
+    [SerializeField] private bool _isattack = false;
+    [SerializeField] private bool _ispatroll = false;
 
     [Header("distance")]
     Transform distance;
@@ -33,14 +33,18 @@ public class EnemyStatus : MonoBehaviour
     [SerializeField] private EnemyStatus enemystatus;
     //other
     Animator _animator;
-    Animation _animation;
-    private int value = UnityEngine.Random.Range(1, 100);
+    private int random = UnityEngine.Random.Range(1, 100);
+    int rangeA = 50;
+    Player _player;
+    bool damage;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        hitpoint = maxhitpoint;
         _animator = GetComponent<Animator>();
-        _animation = GetComponent<Animation>();
+        _player = GetComponent<Player>();
     }
 
     // Update is called once per frame
@@ -53,7 +57,9 @@ public class EnemyStatus : MonoBehaviour
 
 
     /// <summary>
-    /// 戦闘中、2f(2秒)毎に攻撃する
+    /// 戦闘中、2f(2秒)毎に乱数の生成を行う。
+    /// 生成される乱数は1から100とする
+    /// そして、その乱数が値aと値bの範囲内なら攻撃を行う
     /// </summary>
     /// <returns></returns>
     IEnumerator IsBattle()
@@ -61,9 +67,24 @@ public class EnemyStatus : MonoBehaviour
         while(_isattack == true)
         {
             yield return new WaitForSeconds(2f);
-            
+            if (random >= rangeA)
+            {
+                
+            }
         }
     }
-    
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Weapon"))
+        {
+            hitpoint -= _player.attack;
+            _animator.SetTrigger("damage");
+        }
+
+
+    }
+
 }
 
