@@ -15,17 +15,20 @@ public class EnemyStatus : MonoBehaviour
 {
 
     [Header("main system")]
-    int hitpoint;
+    private int hitpoint;
     [SerializeField] public int maxhitpoint = 0;
     [SerializeField] public int attack = 0;
     [SerializeField] public int defence = 0;
 
     [Header("sub system")]
-    bool isattack = false;
-    bool ispatroll = false;
+    [SerializeField] public bool _isattack = false;
+    bool _ispatroll = false;
 
     [Header("distance")]
     Transform distance;
+ 
+
+
 
     [SerializeField] EnemyStatus enemystatus;
     //other
@@ -44,7 +47,7 @@ public class EnemyStatus : MonoBehaviour
     void Update()
     {
 
-        isattack = !isattack;
+        _isattack = !_isattack;
         StartCoroutine(IsBattle());
     }
 
@@ -55,7 +58,7 @@ public class EnemyStatus : MonoBehaviour
     /// <returns></returns>
     IEnumerator IsBattle()
     {
-        while(isattack == true)
+        while(_isattack == true)
         {
             yield return new WaitForSeconds(2f);
             
