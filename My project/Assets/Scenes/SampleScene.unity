@@ -153,7 +153,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameSystem
   timer: 0
   Timetext: {fileID: 0}
+  Killcounttext: {fileID: 0}
+  KillLog: {fileID: 0}
   canvas: {fileID: 0}
+  spawnpoint: []
+  Player: []
+  Enemy: []
 --- !u!114 &104862702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1787,6 +1792,11 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!1 &1152003536 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8000746885750060998, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
+  m_PrefabInstance: {fileID: 1282243938}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1160990650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1802,6 +1812,10 @@ PrefabInstance:
     - target: {fileID: 963417570140818037, guid: 1725ec1b6f6fb8f4bb57bbc98cbfa5ac, type: 3}
       propertyPath: m_TagString
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2599878530720655338, guid: 1725ec1b6f6fb8f4bb57bbc98cbfa5ac, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8652095728237931717, guid: 1725ec1b6f6fb8f4bb57bbc98cbfa5ac, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1847,6 +1861,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 963417570140818037, guid: 1725ec1b6f6fb8f4bb57bbc98cbfa5ac, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2147250505}
     - targetCorrespondingSourceObject: {fileID: 7853022918510491489, guid: 1725ec1b6f6fb8f4bb57bbc98cbfa5ac, type: 3}
       insertIndex: -1
       addedObject: {fileID: 314312474}
@@ -2297,6 +2314,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: RobotKyle
       objectReference: {fileID: 0}
+    - target: {fileID: 5086242376466292938, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
+      propertyPath: look.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086242376466292938, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
+      propertyPath: look.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086242376466292938, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
+      propertyPath: move.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5086242376466292938, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
+      propertyPath: move.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2457,9 +2490,16 @@ MonoBehaviour:
   maxhitpoint: 0
   attack: 0
   defeace: 0
-  ItemSlot: []
-  player: {fileID: 0}
-  ragdoll: []
+  ItemSlot:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  player: {fileID: 1282243946}
+  ragdoll:
+  - {fileID: 1152003536}
+  - {fileID: 1675092593}
 --- !u!54 &1303240586
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2773,7 +2813,7 @@ GameObject:
   - component: {fileID: 1415092354}
   - component: {fileID: 1415092353}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Stage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4024,7 +4064,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1637087018}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1445627964 stripped
@@ -4943,12 +4984,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1637087014}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 5.5, y: 1.5, z: 5.5}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1415092358}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1644375831
 Mesh:
@@ -5128,6 +5169,11 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1675092593 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3544625572543616000, guid: 7ae956b4f54394e80818898d8f4d30c6, type: 3}
+  m_PrefabInstance: {fileID: 1282243938}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1676822109
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5777,6 +5823,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!1 &2147250501 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 963417570140818037, guid: 1725ec1b6f6fb8f4bb57bbc98cbfa5ac, type: 3}
+  m_PrefabInstance: {fileID: 1160990650}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2147250505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147250501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953923206374ba940bc6f7853392386f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStatus
+  maxhitpoint: 0
+  hitpoint: 0
+  attack: 0
+  defence: 0
+  _isattack: 0
+  _ispatroll: 0
+  enemystatus: {fileID: 2147250505}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -5791,4 +5861,3 @@ SceneRoots:
   - {fileID: 104862705}
   - {fileID: 1634695499}
   - {fileID: 1160990650}
-  - {fileID: 1637087018}
