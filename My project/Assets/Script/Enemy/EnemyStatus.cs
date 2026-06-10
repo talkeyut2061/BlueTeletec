@@ -21,23 +21,20 @@ public class EnemyStatus : MonoBehaviour
     [SerializeField] public int defence = 0;
 
     [Header("sub system")]
-    [SerializeField] private bool _isattack = false;
+    [SerializeField] private bool _isattack = true;
     [SerializeField] private bool _ispatroll = false;
 
     [Header("distance")]
     Transform distance;
- 
 
-
-
-    [SerializeField] private EnemyStatus enemystatus;
-    //other
+    [Header("Other")]
     Animator _animator;
     private int random = UnityEngine.Random.Range(1, 100);
     int rangeA = 50;
     Player _player;
     bool damage;
 
+    [SerializeField] private EnemyStatus enemystatus;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -50,7 +47,6 @@ public class EnemyStatus : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         _isattack = !_isattack;
         StartCoroutine(IsBattle());
     }

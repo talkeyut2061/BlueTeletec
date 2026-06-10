@@ -23,16 +23,17 @@ public class Player : MonoBehaviour
 
     [Header("Other")]
     [SerializeField] private Player player;
-    [SerializeField] GameObject[] ragdoll; 
+    [SerializeField] GameObject[] ragdoll;
 
     PlayerInput _playerinput;
     ThirdPersonController _thirdPersonController;
     CharacterController _characterController;
+    ICinemachineCamera _Cinemachine;
     WeaponSystem _weaponSystem;
     Animator _animator;
     GameObject muzzle;
 
-    //参照
+    [Header("refer")]
     EnemyStatus _enemyStatus;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -42,6 +43,11 @@ public class Player : MonoBehaviour
     /// </summary>
     void Start()
     {
+        _thirdPersonController = GetComponent<ThirdPersonController>();
+        _playerinput = GetComponent<PlayerInput>();
+        _characterController = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
+
         hitpoint = maxhitpoint;
         foreach (var item in ragdoll)
         {
@@ -53,6 +59,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         StartCoroutine(Attack());
+        Death();
     }
 
 
@@ -88,12 +95,12 @@ public class Player : MonoBehaviour
     /// <param name="collision"></param>
     private void OnControllerColliderHit(ControllerColliderHit collision)
     {
-        if(collision.gameObject.CompareTag("Weapon"))
+        if (collision.gameObject.CompareTag("Weapon"))
         {
             Debug.Log("weaponを拾った");
             ItemSlot.Add(collision.gameObject);
             collision.gameObject.SetActive(false);
-            
+
         }
 
         else if (collision.gameObject.CompareTag("Enemy"))
@@ -101,23 +108,29 @@ public class Player : MonoBehaviour
             Debug.LogWarning("enemyに触れた");
             hitpoint -= _enemyStatus.attack;
 
-            if (hitpoint < 0)
-                Death();
+            //if (hitpoint < 0)
+            //    Death();
         }
     }
 
 
-
+    /// <summary>
+    /// playerのhitpointが0を下回ったら、GetCompornentしたCompornentをnullにして、
+    /// ragdoll listにあるcollider objectをforeachでtrueにする
+    /// </summary>
     private void Death()
     {
-        _animator.enabled = false;
-        _characterController.enabled = false;
-        _thirdPersonController = null;
-        _playerinput.enabled = false;
-
-        foreach(var item in ragdoll)
+        if (Keyboard.current.enterKey.wasPressedThisFrame)
         {
-            item.SetActive(true);
+            _animator.enabled = false;
+            _characterController.enabled = false;
+            _thirdPersonController.enabled = false;
+            _playerinput.enabled = false;
+
+            foreach (var item in ragdoll)
+            {
+                item.SetActive(true);
+            }
         }
     }
 }
