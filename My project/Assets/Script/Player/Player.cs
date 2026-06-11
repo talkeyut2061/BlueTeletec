@@ -131,6 +131,26 @@ public class Player : MonoBehaviour
             {
                 item.SetActive(true);
             }
+
+            StartCoroutine(AfterDeath());
+
+            
         }
+    }
+
+    IEnumerator AfterDeath()
+    {
+        yield return new WaitForSeconds(3f);
+
+        foreach (var item in ragdoll)
+        {
+            item.SetActive(false);
+        }
+        _animator.enabled = true;
+        _characterController.enabled =true;
+        _thirdPersonController.enabled = true;
+        _playerinput.enabled = true;
+
+       
     }
 }

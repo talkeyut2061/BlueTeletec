@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using KevinIglesias;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,7 +18,7 @@ public class EnemyStatus : MonoBehaviour
     float distance;
     Transform enemy;
     Transform player;
-
+    HumanSoldierController controller;
 
     bool _isattack = false;
     bool _isBattleRun = false;
@@ -28,6 +30,7 @@ public class EnemyStatus : MonoBehaviour
     {
         distance = Vector3.Distance(enemy.position, player.position);
         hitpoint = maxhitpoint;
+        controller = GetComponent<HumanSoldierController>();
         _animator = GetComponent<Animator>();
         _player = GetComponent<Player>();
     }
@@ -75,20 +78,26 @@ public class EnemyStatus : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        hitpoint -= amount;
+        //hitpoint -= amount;
 
-        if (hitpoint <= 0)
-            Die();
+        //if (hitpoint <= 0)
+        if (Keyboard.current.leftCtrlKey.wasPressedThisFrame)
+            hitpoint -= _player.attack;
+
+
         else
             _animator.SetTrigger("Damage");
+
+        if (hitpoint >= 0)
+            StartCoroutine(Die());
     }
 
-    public void Die()
+   IEnumerator Die()
     {
-
         _animator.enabled = false;
+        yield return new WaitForSeconds(5f);
 
-        //_animator.SetTrigger("Death");
-        //// AI 停止など
+        _animator.enabled = true;
+
     }
 }
