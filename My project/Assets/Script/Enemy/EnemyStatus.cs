@@ -1,86 +1,94 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-/// <summary>
-/// enemyの管理を行う
-/// hitpointが0になったら(0以下)、
-/// enemyのanimation compornentをnullにする
-/// また、playerとの距離が一定数まで下がった場合、戦闘態勢を取る(battle animationを再生)
-/// </summary>
 public class EnemyStatus : MonoBehaviour
 {
 
-    [Header("main system")]
-    [SerializeField] public int maxhitpoint = 0;
-    [SerializeField] private int hitpoint;
+    [Header("main status")]
+    [SerializeField] int maxhitpoint = 100;
+    int hitpoint;
     [SerializeField] public int attack = 0;
-    [SerializeField] public int defence = 0;
+    [SerializeField] int defense = 0;
 
-    [Header("sub system")]
-    [SerializeField] private bool _isattack = true;
-    [SerializeField] private bool _ispatroll = false;
-
-    [Header("distance")]
-    Transform distance;
 
     [Header("Other")]
+    float distance;
+    Transform enemy;
+    Transform player;
+
+
+    bool _isattack = false;
+    bool _isBattleRun = false;
+
     Animator _animator;
-    private int random = UnityEngine.Random.Range(1, 100);
-    int rangeA = 50;
     Player _player;
-    bool damage;
 
-    [SerializeField] private EnemyStatus enemystatus;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        distance = Vector3.Distance(enemy.position, player.position);
         hitpoint = maxhitpoint;
         _animator = GetComponent<Animator>();
         _player = GetComponent<Player>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        _isattack = !_isattack;
-        StartCoroutine(IsBattle());
-    }
-
 
     /// <summary>
-    /// 戦闘中、2f(2秒)毎に乱数の生成を行う。
-    /// 生成される乱数は1から100とする
-    /// そして、その乱数が値aと値bの範囲内なら攻撃を行う
+    /// もし、enemyとplayerとの距離が5f(5m)以下の場合
+    /// _isattack flagをtrueかつ_isbattleRun flagがfalseの時のみ
+    /// enemyの視点をplayerに向けて、コルーチンを呼び出す。
     /// </summary>
-    /// <returns></returns>
+    void Update()
+    {
+        if (distance <= 5f)
+        {
+            _isattack = !_isattack;
+
+            if (_isattack && !_isBattleRun)
+                StartCoroutine(IsBattle());
+        }
+    }
+
     IEnumerator IsBattle()
     {
-        while(_isattack == true)
+        _isBattleRun = true;
+
+        while (_isattack)
         {
             yield return new WaitForSeconds(2f);
-            if (random >= rangeA)
+
+            int random = Random.Range(0, 100);
+
+            if (random >= 50)
             {
-                
+                Debug.Log($"生成した乱数: {random}");
+                _animator.SetTrigger("Attack");
+            }
+            else
+            {
+                Debug.Log($"生成した乱数: {random}");
             }
         }
+
+        _isBattleRun = false;
     }
 
-
-    private void OnCollisionEnter(Collision collision)
+    public void TakeDamage(int amount)
     {
-        if(collision.gameObject.CompareTag("Weapon"))
-        {
-            hitpoint -= _player.attack;
-            _animator.SetTrigger("damage");
-        }
+        hitpoint -= amount;
 
-
+        if (hitpoint <= 0)
+            Die();
+        else
+            _animator.SetTrigger("Damage");
     }
 
-}
+    public void Die()
+    {
 
+        _animator.enabled = false;
+
+        //_animator.SetTrigger("Death");
+        //// AI 停止など
+    }
+}
