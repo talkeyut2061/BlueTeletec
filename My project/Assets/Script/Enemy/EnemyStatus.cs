@@ -2,11 +2,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
+/// <summary>
+/// enemyの管理を行う
+/// enemyがweaponオブジェクトに触れたら、10ダメージを入れて、
+/// hitpointが0になったら、animation コンポーネントを無効にする(ラグドール化)
+/// </summary>
 public class EnemyStatus : MonoBehaviour
 {
     [Header("main status")]
     [SerializeField] private int _maxhitpoint = 100;
-    private int _hitpoint;
+    [SerializeField] private int _hitpoint;
     [SerializeField] public int _enemyattack = 5;
     [SerializeField] private int _defense = 5;
     [SerializeField] private float _movespeed = 3f;
@@ -48,13 +54,6 @@ public class EnemyStatus : MonoBehaviour
         _distance = Vector3.Distance(_enemy.position, player.position);
 
         // 30m以上 → 攻撃解除
-        if (_distance > 30f)
-        {
-            _isAttack = false;
-            _isBattleRun = false;
-            return;
-        }
-
         // 20〜30m → 気付いて走る
         if (_distance > 20f)
         {
@@ -63,11 +62,16 @@ public class EnemyStatus : MonoBehaviour
             _isBattleRun = true;
             _animator.Play("Run", 3);
 
-            // ★ enemy が player の方向を向く（正しい書き方）
-            transform.forward = (player.position - transform.position).normalized * _movespeed;
+            // プレイヤーの方向を向く
+            Vector3 dir = (player.position - transform.position).normalized;
+            transform.forward = dir;
+
+            // ★ 実際に移動する
+            _characterController.Move(dir * _movespeed * Time.deltaTime);
 
             return;
         }
+
 
         // 20m以内 → 攻撃モード
         if (_distance <= 20f)
@@ -91,6 +95,7 @@ public class EnemyStatus : MonoBehaviour
                 Debug.Log($"生成した乱数は {random}");
                 Debug.Log("enemyが攻撃した");
                 _animator.SetTrigger("Attack");
+
             }
             else
             {
