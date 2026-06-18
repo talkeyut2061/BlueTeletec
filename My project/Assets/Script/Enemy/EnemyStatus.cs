@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 
@@ -10,20 +11,24 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class EnemyStatus : MonoBehaviour
 {
-    [Header("main status")]
+    [Header("Main Status")]
     [SerializeField] private int _maxhitpoint = 100;
     [SerializeField] private int _hitpoint;
     [SerializeField] public int _enemyattack = 5;
     [SerializeField] private int _defense = 5;
     [SerializeField] private float _movespeed = 3f;
 
-    [Header("Other")]
+    [Header("Transform")]
     [SerializeField] private float _distance;
-    [SerializeField] private Transform _enemy;
-    [SerializeField] private Transform player;
+    [SerializeField] private Transform _enemydistance;
+    [SerializeField] private Transform _playerdistance;
+    [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private float _noticedistance;
+
+
+    [Header("Bool")]
 
     bool _isAttack = true;
-    bool _isBattleRun = true;
 
     Animator _animator;
     Animation _animation;
@@ -36,12 +41,11 @@ public class EnemyStatus : MonoBehaviour
         // 先に GetComponent しないと null になる
         _weaponSystem = GetComponent<WeaponSystem>();
         _weaponObject = GetComponent<WeaponObject>();
+        _agent = GetComponent<NavMeshAgent>();
 
         // 武器の攻撃力を加算
         _enemyattack += _weaponObject.BasicAttack / 5;
-
         _isAttack = false;
-        _isBattleRun = false;
         _hitpoint = _maxhitpoint;
 
         _animator = GetComponent<Animator>();
@@ -51,19 +55,19 @@ public class EnemyStatus : MonoBehaviour
 
     void Update()
     {
-        _distance = Vector3.Distance(_enemy.position, player.position);
+        _distance = Vector3.Distance(_enemydistance.position, _playerdistance.position);
 
         // 30m以上 → 攻撃解除
         // 20〜30m → 気付いて走る
         if (_distance > 20f)
         {
             Debug.Log("enemyに気付かれた！ 逃げるか戦え！");
+            _agent.SetDestination(_playerdistance.position);
             _isAttack = true;
-            _isBattleRun = true;
             _animator.Play("Run", 3);
 
             // プレイヤーの方向を向く
-            Vector3 dir = (player.position - transform.position).normalized;
+            Vector3 dir = (_playerdistance.position - transform.position).normalized;
             transform.forward = dir;
 
             // ★ 実際に移動する
@@ -103,8 +107,6 @@ public class EnemyStatus : MonoBehaviour
                 Debug.Log("攻撃しなかった");
             }
         }
-
-        _isBattleRun = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -127,7 +129,6 @@ public class EnemyStatus : MonoBehaviour
             yield return new WaitForSeconds(5f);
 
             _isAttack = false;
-            _isBattleRun = false;
 
             yield return new WaitForSeconds(5f);
 

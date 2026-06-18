@@ -1,8 +1,11 @@
 ﻿using StarterAssets;
+using System;
 using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 /// <summary>
@@ -27,8 +30,10 @@ public class GameSystem : MonoBehaviour
     [SerializeField] private TMP_Text _killLog;
     [SerializeField] private TMP_Text _stageClear;
 
-    [Header("Canvas Component")]
+    [Header("Button and Canvas Component")]
     [SerializeField] private Button _startButton;
+    [SerializeField] private Button _creditsButton;
+    [SerializeField] private RawImage _creditsImage;
 
     [Header("SpawnPoint")]
     [SerializeField] private GameObject[] _enemyspawnPoints;
@@ -37,37 +42,67 @@ public class GameSystem : MonoBehaviour
     [Header("Other Component")]
     [SerializeField] private GameObject _player;
     [SerializeField] private GameObject _enemy;
+
+
+    [Header("Audio Component")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _titlemusicclip;
+    [SerializeField] private AudioClip _battlemusicclip;
+    [SerializeField] private AudioClip _clicksoundclip;
     
 
     void Start()
     {
         // UI 初期化
+
         _timeText.enabled = false;
         _killCountText.enabled = false;
         _killLog.enabled = false;
         _stageClear.enabled = false;
+        _title.enabled = true;
+        _creditsImage.gameObject.SetActive(false);
 
         // ボタンにイベント登録
         _startButton.onClick.AddListener(GameStart);
         _enemy.SetActive(false);
         _player.SetActive(false);
+
+        _audioSource.PlayOneShot(_titlemusicclip);
+        _audioSource.loop = true;
     }
 
     /// <summary>
     /// buttonが押されたら、このメソッドを呼び出し、gameをstartする
     /// gametimerで時間を変更出来る
     /// </summary>
-    public void GameStart()
+    private void GameStart()
     {
+        _audioSource.PlayOneShot(_clicksoundclip);
         StartCoroutine(GameFlow());
     }
 
+
     /// <summary>
-    /// ゲーム全体の流れを管理するコルーチン
+    /// クレジット出す用
+    /// escキーで戻る
     /// </summary>
-    IEnumerator GameFlow()
+    private void Credit()
+    {
+        _audioSource.PlayOneShot(_clicksoundclip);
+        _creditsImage.gameObject.SetActive(true);
+        _startButton.gameObject.SetActive(false);
+        _creditsButton.gameObject.SetActive(false);
+        _title.enabled = false;
+    }
+
+  
+        /// <summary>
+        /// ゲーム全体の流れを管理するコルーチン
+        /// </summary>
+        IEnumerator GameFlow()
     {
         // カウントダウン表示 
+        _audioSource.Stop();
         _startButton.gameObject.SetActive(false);
         _title.enabled = false;
         _timeText.enabled = true;
@@ -89,6 +124,7 @@ public class GameSystem : MonoBehaviour
         while (timer > 0)
         {
             Cursor.visible = false;
+            _audioSource.PlayOneShot(_battlemusicclip);
             _player.SetActive(true);
             _enemy.SetActive(true);
             _timeText.text = timer.ToString();
@@ -104,7 +140,7 @@ public class GameSystem : MonoBehaviour
     /// KillCount を +1 し、ログを表示する
     /// EnemyStatus から呼び出す想定
     /// </summary>
-    public void AddKill()
+    private void AddKill()
     {
         _killCount++;
         _killCountText.text = $"Kill : {_killCount}";
@@ -144,7 +180,7 @@ public class GameSystem : MonoBehaviour
     /// </summary>
     public Transform GetRandomEnemySpawn()
     {
-        int index = Random.Range(0, _enemyspawnPoints.Length);
+        int index = UnityEngine.Random.Range(0, _enemyspawnPoints.Length);
         return _enemyspawnPoints[index].transform;
     }
 
@@ -154,7 +190,7 @@ public class GameSystem : MonoBehaviour
     /// <returns></returns>
     public Transform GetRandomPlayerSpawn()
     {
-        int index = Random.Range(0, _playerspawnPoints.Length);
+        int index = UnityEngine.Random.Range(0, _playerspawnPoints.Length);
         return _playerspawnPoints[index].transform;
     }
 }
