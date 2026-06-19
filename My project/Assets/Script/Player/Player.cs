@@ -58,16 +58,6 @@ public class Player : MonoBehaviour
         // 新 Input System（正しい書き方）
         if (Mouse.current.leftButton.wasPressedThisFrame)
             Attack();
-
-        // こちらは新 Input System なので OK
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
-        {
-            Debug.Log("playerは10ダメージを受けた");
-            _animator.SetTrigger("Damage");
-            _hitpoint -= 10;
-        }
-
-        Death();
     }
 
     /// <summary>
